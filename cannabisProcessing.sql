@@ -5,6 +5,8 @@
  *
  */
 
+-- Setting user to admin
+
 DROP TABLE IF EXISTS strain CASCADE;
 DROP TABLE IF EXISTS type CASCADE;
 DROP TABLE IF EXISTS type_xref CASCADE;
@@ -19,7 +21,7 @@ DROP TABLE IF EXISTS flavor_xref CASCADE;
 CREATE TABLE strain (
   id SERIAL,
   Strain VARCHAR(50),
-  Rating DECIMAL(1,1),
+  Rating TEXT,
   Description TEXT,
   PRIMARY KEY (id)
 );
@@ -70,37 +72,11 @@ CREATE TABLE flavor_xref (
 );
 
 -- Copying CSV files to SQL Database
-COPY strains(id, Strain, Rating, Description)
-FROM '.\strain_data.csv'
-DELIMITER ','
-CSV HEADER;
+\copy strain FROM './strain_data.csv' DELIMITER ',' CSV
+\copy type FROM './type_data.csv' DELIMITER ',' CSV
+\copy type_xref FROM './type_xref.csv' DELIMITER ',' CSV
+\copy effect FROM './effect_data.csv' DELIMITER ',' CSV
+\copy effect_xref FROM './effect_xref.csv' DELIMITER ',' CSV
+\copy flavor FROM './flavor_data.csv' DELIMITER ',' CSV
+\copy flavor_xref FROM './flavor_xref.csv' DELIMITER ',' CSV
 
-COPY type(id, Type)
-FROM '.\type_data.csv'
-DELIMITER ','
-CSV HEADER;
-
-COPY type_xref(id, Type_id, Strain_id)
-FROM '.\type_xref.csv'
-DELIMITER ','
-CSV HEADER;
-
-COPY effect(id, Effect)
-FROM '.\effect_data.csv'
-DELIMITER ','
-CSV HEADER;
-
-COPY effect_xref(id, Effect_id, Strain_id)
-FROM '.\effect_xref.csv'
-DELIMITER ','
-CSV HEADER;
-
-COPY flavor(id, Flavor)
-FROM '.\flavor_data.csv'
-DELIMITER ','
-CSV HEADER;
-
-COPY flavor_xref(id, Flavor_id, Strain_id)
-FROM '.\flavor_xref.csv'
-DELIMITER ','
-CSV HEADER;
