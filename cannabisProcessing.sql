@@ -1,7 +1,7 @@
 /*
  * final.sql
  * 
- *  author: Logan Hsia
+ *  authors: Logan Hsia, Pouya Zakeri, Austin "Slade" Getz, Clare Garski
  *
  */
 
