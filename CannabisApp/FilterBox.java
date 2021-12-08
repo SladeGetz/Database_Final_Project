@@ -39,6 +39,7 @@ public class FilterBox extends JDialog  {
 	}
 	
 	private JPanel setTypeBox() throws SQLException {
+		
 		String query =
 				"SELECT Type" +
 				"FROM type";
@@ -48,6 +49,8 @@ public class FilterBox extends JDialog  {
 			types.add(new JCheckBox(rs.getString(1)));
 		}
 		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		panel.add(new JLabel("TYPES"));
 		for (JCheckBox box: types) {
 			panel.add(box);
 		}
@@ -64,6 +67,8 @@ public class FilterBox extends JDialog  {
 			flavors.add(new JCheckBox(rs.getString(1)));
 		}
 		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		panel.add(new JLabel("FLAVORS"));
 		for (JCheckBox box: flavors) {
 			panel.add(box);
 		}
@@ -79,6 +84,8 @@ public class FilterBox extends JDialog  {
 			effects.add(new JCheckBox(rs.getString(1)));
 		}
 		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		panel.add(new JLabel("EFFECTS"));
 		for (JCheckBox box: effects) {
 			panel.add(box);
 		}
