@@ -249,7 +249,7 @@ class GuiEditStrainDialog extends JDialog implements ActionListener {
                 	for (int fx: effects.getSelectedIndices()) {
                 		effect.add(allEffects.elementAt(fx));
                 	}
-                    model.updateStrain(strainID, strainText.getText(), (String)typeCB.getSelectedItem(), ratingText.getText(), flavor, effect, descriptionText.getText());
+//                    model.updateStrain(strainID, strainText.getText(), (String)typeCB.getSelectedItem(), ratingText.getText(), flavor, effect, descriptionText.getText());
                     dispose();
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(this,

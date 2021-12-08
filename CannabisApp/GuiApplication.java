@@ -60,6 +60,9 @@ public class GuiApplication implements ActionListener, ListSelectionListener {
     void open() {
         model = new GuiModel();
         filterBox = new FilterBox();
+        filterBox.effectButton.addActionListener(this);
+        filterBox.typeButton.addActionListener(this);
+        filterBox.flavorButton.addActionListener(this);
         GuiLoginDialog loginDialog = new GuiLoginDialog(model, filterBox);
         loginDialog.open();
         try {
@@ -161,6 +164,15 @@ public class GuiApplication implements ActionListener, ListSelectionListener {
         else if (e.getSource() == this.moreInfoButton) {
         	moreInfo();
         }
+        else if (e.getSource() == this.filterBox.effectButton) {
+        	filterBox.switchEffects();
+        }
+        else if (e.getSource() == this.filterBox.flavorButton) {
+        	filterBox.switchFlavors();
+        }
+		else if (e.getSource() == this.filterBox.typeButton) {
+			filterBox.switchTypes();
+		}
      }
 
 //    private void deleteAlbum() {

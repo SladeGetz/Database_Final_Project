@@ -14,7 +14,7 @@ DROP TABLE IF EXISTS effects CASCADE;
 DROP TABLE IF EXISTS effect_xref CASCADE;
 DROP TABLE IF EXISTS flavors CASCADE;
 DROP TABLE IF EXISTS flavor_xref CASCADE;
-
+DROP TABLE IF EXISTS myStrains CASCADE;
 
 -- Table Creation
 
@@ -24,6 +24,13 @@ CREATE TABLE strain (
   Rating DECIMAL(2, 1),
   Description TEXT,
   PRIMARY KEY (id)
+);
+
+CREATE TABLE myStrains (
+    Strain_id INTEGER, 
+    have_tried BOOL,
+    PRIMARY KEY (Strain_id, have_tried),
+    FOREIGN KEY (Strain_id) REFERENCES strain(id)
 );
 
 CREATE TABLE type (

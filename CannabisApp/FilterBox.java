@@ -18,6 +18,10 @@ public class FilterBox extends JDialog  {
 	JTextField rating;
 	JComboBox orderBy;
 	
+	JButton typeButton;
+	JButton flavorButton;
+	JButton effectButton;
+	
 	public FilterBox() {
 		this.setDefaultCloseOperation(HIDE_ON_CLOSE);
 		this.setLayout(new FlowLayout());
@@ -38,7 +42,12 @@ public class FilterBox extends JDialog  {
 		orderBy.addItem("Rating");
 		orderBy.setSelectedIndex(0);
 		orderBy.setEditable(false);
+		
+		typeButton = new JButton("UNSELECT ALL");
+		flavorButton = new JButton("UNSELECT ALL");
+		effectButton = new JButton("UNSELECT ALL");
 	}
+	
 	public void setUp() throws SQLException {
 		String query =
 				"SELECT Flavor " +
@@ -89,6 +98,7 @@ public class FilterBox extends JDialog  {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.add(new JLabel("TYPES"));
+		panel.add(typeButton);
 		for (JCheckBox box: types) {
 			box.setSelected(true);
 			panel.add(box);
@@ -101,6 +111,7 @@ public class FilterBox extends JDialog  {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.add(new JLabel("FLAVORS"));
+		panel.add(flavorButton);
 		for (JCheckBox box: flavors) {
 			box.setSelected(true);
 			panel.add(box);
@@ -112,6 +123,7 @@ public class FilterBox extends JDialog  {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.add(new JLabel("EFFECTS"));
+		panel.add(effectButton);
 		for (JCheckBox box: effects) {
 
 			box.setSelected(true);
@@ -140,6 +152,7 @@ public class FilterBox extends JDialog  {
 			}
 			count++;
 		}
+		System.out.println(ans.substring(0, ans.length()-2));
 		return ans.substring(0, ans.length()-2);
 	}
 	
@@ -152,6 +165,7 @@ public class FilterBox extends JDialog  {
 			}
 			count++;
 		}
+		System.out.println(ans.substring(0, ans.length()-2));
 		return ans.substring(0, ans.length()-2);
 	}
 	
@@ -164,6 +178,7 @@ public class FilterBox extends JDialog  {
 			}
 			count++;
 		}
+		System.out.println(ans.substring(0, ans.length()-2));
 		return ans.substring(0, ans.length()-2);
 	}
 	
@@ -196,4 +211,48 @@ public class FilterBox extends JDialog  {
 
 	        db = DriverManager.getConnection(connectString, username, password);
 	    }
+	 
+	 public void switchEffects() {
+		 if (effectButton.getText().equals("UNSELECT ALL")) {
+			 for (JCheckBox box: effects) {
+				 box.setSelected(false);
+			 }
+			 effectButton.setText("SELECT ALL");
+		 } else {
+			 for (JCheckBox box: effects) {
+				 box.setSelected(true);
+			 }
+			 effectButton.setText("UNSELECT ALL");
+		 }
+		 repaint();
+	 }
+	 public void switchTypes() {
+		 if (typeButton.getText().equals("UNSELECT ALL")) {
+			 for (JCheckBox box: types) {
+				 box.setSelected(false);
+			 }
+			 typeButton.setText("SELECT ALL");
+		 } else {
+			 for (JCheckBox box: types) {
+				 box.setSelected(true);
+			 }
+			 typeButton.setText("UNSELECT ALL");
+		 }
+		 repaint();
+	 }
+	 public void switchFlavors() {
+		 if (flavorButton.getText().equals("UNSELECT ALL")) {
+			 for (JCheckBox box: flavors) {
+				 box.setSelected(false);
+			 }
+			 flavorButton.setText("SELECT ALL");
+		 } else {
+			 for (JCheckBox box: flavors) {
+				 box.setSelected(true);
+			 }
+			 flavorButton.setText("UNSELECT ALL");
+		 }
+		 repaint();
+	 }
+	 
 }

@@ -141,29 +141,45 @@ public class GuiModel extends DefaultTableModel {
  
 
     public ResultSet searchByStrain(String val, FilterBox filterBox) throws SQLException {
+//    	String query =
+//                "SELECT s.Strain, t.Type, s.Rating, STRING_AGG(DISTINCT e.Effect, ', ' ORDER BY e.Effect) Effects, STRING_AGG(DISTINCT f.Flavor, ', ' ORDER BY f.Flavor) Flavors, s.id " +
+//                "FROM type AS t, type_xref AS tx, strain AS s, effects AS e, flavors AS f, effect_xref AS ex, flavor_xref AS fx " +
+//                "WHERE lower(s.Strain) LIKE lower(?) " +
+//                "AND s.id = tx.Strain_id " +
+//                "AND s.Rating >= ? " + // get min rating
+//                "AND (s.id IN " + 
+//                		"(SELECT ex.Strain_id " +
+//                		"FROM effect_xref AS ex " +
+//                		"WHERE ex.Effect_id IN (" + filterBox.getEffects() + ")) " + // get selected effect ids
+//                	"OR s.id IN " +
+//                		"(SELECT fx.Strain_id " +
+//                		"FROM flavor_xref AS fx " +
+//                		"WHERE fx.Flavor_id IN (" + filterBox.getFlavors() + "))) " + // get selected flavors 
+//                "AND t.id IN (" + filterBox.getTypes() + ") " +
+//                "AND tx.Type_id = t.id "+
+//                "AND e.id = ex.Effect_id " +
+//                "AND ex.Strain_id = s.id " +
+//                "AND f.id = fx.Flavor_id " +
+//                "AND fx.Strain_id = s.id " +
+//                "GROUP BY s.id, t.Type " +
+//                "ORDER BY " + filterBox.getOrder(); // filterbox sets order
+//    	
     	String query =
-                "SELECT s.Strain, t.Type, s.Rating, STRING_AGG(DISTINCT e.Effect, ', ' ORDER BY e.Effect) Effects, STRING_AGG(DISTINCT f.Flavor, ', ' ORDER BY f.Flavor) Flavors, s.id " +
-                "FROM type AS t, type_xref AS tx, strain AS s, effects AS e, flavors AS f, effect_xref AS ex, flavor_xref AS fx " +
-                "WHERE lower(s.Strain) LIKE lower(?) " +
-                "AND s.id = tx.Strain_id " +
-                "AND s.Rating >= ? " + // get min rating
-                "AND (s.id IN " + 
-                		"(SELECT ex.Strain_id " +
-                		"FROM effect_xref AS ex " +
-                		"WHERE ex.effect_id IN (" + filterBox.getEffects() + ")) " + // get selected effect ids
-                	"OR s.id IN " +
-                		"(SELECT fx.Strain_id " +
-                		"FROM flavor_xref AS fx " +
-                		"WHERE fx.flavor_id IN (" + filterBox.getFlavors() + "))) " + // get selected flavors 
-                "AND t.id IN (" + filterBox.getTypes() + ") " +
-                "AND tx.type_id = t.id "+
-                "AND e.id = ex.effect_id " +
-                "AND ex.strain_id = s.id " +
-                "AND f.id = fx.flavor_id " +
-                "AND fx.strain_id = s.id " +
-                "GROUP BY s.id, t.Type " +
-                "ORDER BY " + filterBox.getOrder(); // filterbox sets order
-
+    			"SELECT s.Strain, t.Type, s.Rating, STRING_AGG(DISTINCT e.Effect, ', ' ORDER BY e.Effect) Effects, STRING_AGG(DISTINCT f.Flavor, ', ' ORDER BY f.Flavor) Flavors, s.id " +
+    					"FROM type AS t, type_xref AS tx, strain AS s, (SELECT Effect, id FROM effects WHERE id IN (" + filterBox.getEffects() + ")) AS e, (SELECT Flavor, id FROM flavors WHERE id IN (" + filterBox.getFlavors() + ")) AS f, effect_xref AS ex, flavor_xref AS fx " +
+    					"WHERE lower(s.Strain) LIKE lower(?) " +
+    					"AND s.id = tx.Strain_id " +
+    					"AND s.Rating >= ? " + // get min rating
+    					"AND t.id IN (" + filterBox.getTypes() + ") " +
+    					"AND tx.Type_id = t.id "+
+    					"AND e.id = ex.Effect_id " +
+    					"AND ex.Strain_id = s.id " +
+    					"AND f.id = fx.Flavor_id " +
+    					"AND fx.Strain_id = s.id " +
+    					"GROUP BY s.id, t.Type " +
+    					"ORDER BY " + filterBox.getOrder(); // filterbox sets order
+    	
+    	
             PreparedStatement ps = db.prepareStatement(query);
             ps.setString(1, "%" + val + "%");
             ps.setDouble(2, Double.parseDouble(filterBox.getMinRating()));
@@ -212,22 +228,20 @@ public class GuiModel extends DefaultTableModel {
         return list;
     }
 
-    public void insertArtist(String artist) throws SQLException {
-        // TODO: implement this
-        System.out.println("Inserting new artist: " + artist + " (Not yet implemented)");
-    }
 
     public void insertStrain(String strain, String type, String rating, Vector<String> flavors, Vector<String> effects, String description) throws SQLException {
         // TODO: implement this
         System.out.println("Inserting new strain: "  + " - "  + "("  + ") " + " (Not yet implemented)");
     }
 
-    public void updateStrain(int strainID, String strain, String type, String rating, Vector<String> flavors, Vector<String> effects, String description) throws SQLException {
-        // TODO: implement this
-        System.out.println("Updating strain id " + strainID + " to " + strain + "(" + rating + ") " + " (Not yet implemented)");
-        setValueAt(strain, selectedRow, 1);
-        setValueAt(type, selectedRow, 2);
-        setValueAt(rating, selectedRow, 3);
+    public void addStrain(int strainID, Boolean has_tried) throws SQLException {
+    	String query = "INSERT INTO myStrains VALUES (?, ?)";
+    	
+    	PreparedStatement ps = db.prepareStatement(query);
+    	ps.setInt(1, strainID);
+    	ps.setBoolean(2, has_tried);
+    	
+    	ps.executeQuery();
     }
 
     public void deleteStrain(int strainID) throws SQLException {
@@ -240,7 +254,7 @@ public class GuiModel extends DefaultTableModel {
 		String query =
 			"SELECT Flavor " +
 			"FROM flavors " +
-			"WHERE flavor.id IN " +
+			"WHERE flavors.id IN " +
 					"(SELECT f.flavor_id " +
 					"FROM flavor_xref AS f " +
 					"WHERE f.Strain_id = ?)";
@@ -274,9 +288,11 @@ public class GuiModel extends DefaultTableModel {
     }
     
     public String getStrainInfo() throws SQLException {
+    	String flav = getFlavors(getStrainID()).toString();
+    	String fx = getEffects(getStrainID()).toString();
     	String info = "Strain: " + getStrain() +
-    			"\nFlavors: " + getStrainFlavors() +
-    			"\nEffects: " + getStrainEffects() +
+    			"\nFlavors: " + flav.substring(1, flav.length() -1) +
+    			"\nEffects: " + fx.substring(1, fx.length() -1 ) +
     			"\nRating: " + getStrainRating() + "\tType: " + getStrainType() +
     			"\nDescription: " + getStrainDescription();
     	return info;
