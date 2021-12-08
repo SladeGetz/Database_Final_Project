@@ -21,72 +21,92 @@ public class FilterBox extends JDialog  {
 	public FilterBox() {
 		this.setDefaultCloseOperation(HIDE_ON_CLOSE);
 		this.setLayout(new FlowLayout());
-
+		
 		this.setSize(new Dimension(200, 500));
 		this.setVisible(false);
 		rating = new JTextField("0.0");
+		
+		types = new Vector<JCheckBox>();
+		flavors = new Vector<JCheckBox>();
+		effects = new Vector<JCheckBox>();
 		
 		
 		
 	}
 	public void setUp() throws SQLException {
+//		String query =
+//				"SELECT Flavor " +
+//				"FROM flavor";
+//		PreparedStatement ps = db.prepareStatement(query);
+//		ResultSet rs = ps.executeQuery();
+//		while (rs.next()) {
+//			flavors.add(new JCheckBox(rs.getString(1)));
+//		}
+//		
+//		query =
+//				"SELECT Effect " +
+//				"FROM effect";
+//		ps = db.prepareStatement(query);
+//		rs = ps.executeQuery();
+//		while (rs.next()) {
+//			effects.add(new JCheckBox(rs.getString(1)));
+//		}
+//		
+//		query =
+//				"SELECT Type " +
+//				"FROM type";
+//		ps = db.prepareStatement(query);
+//		rs = ps.executeQuery();
+//		while (rs.next()) {
+//			types.add(new JCheckBox(rs.getString(1)));
+//		}
+//		
+		flavors.add(new JCheckBox("Citrus"));
+		types.add(new JCheckBox("Hybrid"));
+		effects.add(new JCheckBox("Deddy"));
 		add(setTypeBox());
 		add(setFlavorBox());
 		add(setEffectBox());
 		add(new JLabel("Rating: "));
 		add(rating);
 		this.pack();
+		
+		
 	}
 	
 	private JPanel setTypeBox() throws SQLException {
 		
-		String query =
-				"SELECT Type" +
-				"FROM type";
-		PreparedStatement ps = db.prepareStatement(query);
-		ResultSet rs = ps.executeQuery();
-		while (rs.next()) {
-			types.add(new JCheckBox(rs.getString(1)));
-		}
+		
+	
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.add(new JLabel("TYPES"));
 		for (JCheckBox box: types) {
+			box.setSelected(true);
 			panel.add(box);
 		}
 		return panel;
 	}
 	
 	private JPanel setFlavorBox() throws SQLException {
-		String query =
-				"SELECT Flavor" +
-				"FROM flavor";
-		PreparedStatement ps = db.prepareStatement(query);
-		ResultSet rs = ps.executeQuery();
-		while (rs.next()) {
-			flavors.add(new JCheckBox(rs.getString(1)));
-		}
+		
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.add(new JLabel("FLAVORS"));
 		for (JCheckBox box: flavors) {
+			box.setSelected(true);
 			panel.add(box);
 		}
 		return panel;
 	}
-	private JPanel setEffectBox() throws SQLException {
-		String query =
-				"SELECT Effect" +
-				"FROM effect";
-		PreparedStatement ps = db.prepareStatement(query);
-		ResultSet rs = ps.executeQuery();
-		while (rs.next()) {
-			effects.add(new JCheckBox(rs.getString(1)));
-		}
+	private JPanel setEffectBox()  {
+		
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.add(new JLabel("EFFECTS"));
 		for (JCheckBox box: effects) {
+
+			box.setSelected(true);
 			panel.add(box);
 		}
 		return panel;
@@ -94,6 +114,12 @@ public class FilterBox extends JDialog  {
 	
 	
 	public String getMinRating() {
+		if (Double.parseDouble(rating.getText()) > 5.0) {
+			rating.setText("5.0");
+		}
+		if (Double.parseDouble(rating.getText()) < 0.0) {
+			rating.setText("0.0");
+		}
 		return rating.getText();
 	}
 	
