@@ -16,7 +16,7 @@ public class FilterBox extends JDialog  {
 	Vector<JCheckBox> effects;
 	
 	JTextField rating;
-	JComboBox order;
+	JComboBox orderBy;
 	
 	public FilterBox() {
 		this.setDefaultCloseOperation(HIDE_ON_CLOSE);
@@ -30,45 +30,53 @@ public class FilterBox extends JDialog  {
 		flavors = new Vector<JCheckBox>();
 		effects = new Vector<JCheckBox>();
 		
-		
-		
+		orderBy = new JComboBox();
+		orderBy.addItem("Strain");
+		orderBy.addItem("Type");
+		orderBy.addItem("Effects");
+		orderBy.addItem("Flavors");
+		orderBy.addItem("Rating");
+		orderBy.setSelectedIndex(0);
+		orderBy.setEditable(false);
 	}
 	public void setUp() throws SQLException {
-//		String query =
-//				"SELECT Flavor " +
-//				"FROM flavor";
-//		PreparedStatement ps = db.prepareStatement(query);
-//		ResultSet rs = ps.executeQuery();
-//		while (rs.next()) {
-//			flavors.add(new JCheckBox(rs.getString(1)));
-//		}
-//		
-//		query =
-//				"SELECT Effect " +
-//				"FROM effect";
-//		ps = db.prepareStatement(query);
-//		rs = ps.executeQuery();
-//		while (rs.next()) {
-//			effects.add(new JCheckBox(rs.getString(1)));
-//		}
-//		
-//		query =
-//				"SELECT Type " +
-//				"FROM type";
-//		ps = db.prepareStatement(query);
-//		rs = ps.executeQuery();
-//		while (rs.next()) {
-//			types.add(new JCheckBox(rs.getString(1)));
-//		}
-//		
-		flavors.add(new JCheckBox("Citrus"));
-		types.add(new JCheckBox("Hybrid"));
-		effects.add(new JCheckBox("Deddy"));
+		String query =
+				"SELECT Flavor " +
+				"FROM flavors";
+		PreparedStatement ps = db.prepareStatement(query);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			flavors.add(new JCheckBox(rs.getString(1)));
+		}
+		
+		query =
+				"SELECT Effect " +
+				"FROM effects";
+		ps = db.prepareStatement(query);
+		rs = ps.executeQuery();
+		while (rs.next()) {
+			effects.add(new JCheckBox(rs.getString(1)));
+		}
+		
+		query =
+				"SELECT Type " +
+				"FROM type";
+		ps = db.prepareStatement(query);
+		rs = ps.executeQuery();
+		while (rs.next()) {
+			types.add(new JCheckBox(rs.getString(1)));
+		}
+		
+		
 		add(setTypeBox());
 		add(setFlavorBox());
 		add(setEffectBox());
 		add(new JLabel("Rating: "));
 		add(rating);
+		
+		add(new JLabel("Order By"));
+		add(orderBy);
+		
 		this.pack();
 		
 		
@@ -159,8 +167,25 @@ public class FilterBox extends JDialog  {
 		return ans.substring(0, ans.length()-2);
 	}
 	
+	
+	
 	public String getOrder() {
-		return "s.Strain, s.Rating, t.Type";
+		
+		if (orderBy.getSelectedItem().equals("Type")) {
+			return "t.Type, s.Rating DESC, s.Strain, Flavors, Effects";
+		}
+		else if (orderBy.getSelectedItem().equals("Effects")) {
+			return "Effects, s.Rating DESC, s.Strain, t.Type, Flavors";
+		}
+		else if (orderBy.getSelectedItem().equals("Flavors")) {
+			return "Flavors, s.Rating DESC, s.Strain, t.Type, Effects";
+		}
+		else if (orderBy.getSelectedItem().equals("Rating")) {
+			return "s.Rating DESC, s.Strain, t.Type, Flavors, Effects";	
+		}
+
+		return "s.Strain, s.Rating DESC, t.Type, Flavors, Effects";
+		
 	}
 	
 

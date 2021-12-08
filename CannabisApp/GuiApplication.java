@@ -47,6 +47,7 @@ public class GuiApplication implements ActionListener, ListSelectionListener {
     JPanel      buttonPane;
     JButton     addStrainButton;
     JButton		filterButton;
+    JButton		moreInfoButton;
     JButton     editStrainButton;
     JButton     deleteStrainButton;
     JButton     quitButton;
@@ -123,11 +124,15 @@ public class GuiApplication implements ActionListener, ListSelectionListener {
         deleteStrainButton = new JButton("Delete Album");
         deleteStrainButton.setEnabled(false);
         deleteStrainButton.addActionListener(this);
+        moreInfoButton = new JButton("More Info");
+        moreInfoButton.setEnabled(false);
+        moreInfoButton.addActionListener(this);
         quitButton = new JButton("Quit");
         quitButton.addActionListener(this);
 
         buttonPane.add(addStrainButton);
         buttonPane.add(editStrainButton);
+        buttonPane.add(moreInfoButton);
         buttonPane.add(deleteStrainButton);
         buttonPane.add(quitButton);
 
@@ -152,6 +157,9 @@ public class GuiApplication implements ActionListener, ListSelectionListener {
         }
         else if (e.getSource() == this.filterButton) {
         	filterBox.setVisible(true);
+        }
+        else if (e.getSource() == this.moreInfoButton) {
+        	moreInfo();
         }
      }
 
@@ -185,6 +193,14 @@ public class GuiApplication implements ActionListener, ListSelectionListener {
 			sqlExceptionHandler(e);
 		}
     }
+    private void moreInfo() {
+    	
+    	try {
+			JOptionPane.showMessageDialog(frame, model.getStrainInfo());
+		} catch (SQLException e) {
+			sqlExceptionHandler(e);
+		}
+    }
     
     private void search() {
         try {
@@ -198,10 +214,12 @@ public class GuiApplication implements ActionListener, ListSelectionListener {
         if (searchResultsTable.getSelectedRow() == -1) {
             editStrainButton.setEnabled(false);
             deleteStrainButton.setEnabled(false);
+            moreInfoButton.setEnabled(false);
         }
         else {
             editStrainButton.setEnabled(true);
             deleteStrainButton.setEnabled(true);
+            moreInfoButton.setEnabled(true);
         }
         model.setSelectedRow(searchResultsTable.getSelectedRow());
     }
