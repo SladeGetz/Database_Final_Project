@@ -39,7 +39,7 @@ public class GuiModel extends DefaultTableModel {
         }
     }
 
-    public String getStrainTitle() {
+    public String getStrainType() {
         if (selectedRow != -1) {
             return (String) getValueAt(selectedRow, 1);
         }
@@ -48,7 +48,7 @@ public class GuiModel extends DefaultTableModel {
         }
     }
 
-    public String getStrainYear() {
+    public String getStrainRating() {
         if (selectedRow != -1) {
             return (String) getValueAt(selectedRow, 2);
         }
@@ -95,17 +95,16 @@ public class GuiModel extends DefaultTableModel {
     public ResultSet searchByStrain(String val, FilterBox filterBox) throws SQLException {
     	String query =
                 "SELECT s.Strain, t.Type, s.Rating " +
-                "FROM type AS t, type_xref AS tx, strain as S" +
+                "FROM type AS t, type_xref AS tx, strain AS S " +
                 "WHERE lower(s.Strain) LIKE lower(?) " +
-                "AND s.id = tx.Strain_ID" +
-                "AND s.Rating >= ?" + // get min rating
+                "AND s.id = tx.Strain_id " +
+                "AND s.Rating >= ? " + // get min rating
                 "AND s.id IN " + 
-                	"(SELECT e.Strain_id, f.Strain_id" +
-                	"FROM effects AS e, flavors, AS f" +
-                	"WHERE e.id IN (?)" + // get selected effect ids
-                	"WHERE f.id IN (?) )" + // get selected flavors 
-
-                "AND t.id IN (?)" +
+                	"(SELECT e.Strain_id, f.Strain_id " +
+                	"FROM effects AS e, flavors AS f " +
+                	"WHERE e.id IN (?) " + // get selected effect ids
+                	"AND f.id IN (?)) " + // get selected flavors 
+                "AND t.id IN (?) " +
                 "ORDER BY ?"; // filterbox sets order
 
             PreparedStatement ps = db.prepareStatement(query);
@@ -118,12 +117,45 @@ public class GuiModel extends DefaultTableModel {
             return ps.executeQuery();
     }
 
-    public Vector<String> getArtists() throws SQLException {
-        // TODO: replace this with something that queries the database
+    public Vector<String> getFlavors() throws SQLException {
         Vector<String> list = new Vector<>();
-        list.add("Chris Thile");
-        list.add("Hiromi");
-        list.add("Jethro Tull");
+		String query =
+			"SELECT Flavor " +
+			"FROM flavor";
+		PreparedStatement ps = db.prepareStatement(query);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			list.add(rs.getString(1));
+		}
+        
+        return list;
+    }
+    
+    public Vector<String> getEffects() throws SQLException {
+        Vector<String> list = new Vector<>();
+		String query =
+			"SELECT Effect " +
+			"FROM effect";
+		PreparedStatement ps = db.prepareStatement(query);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			list.add(rs.getString(1));
+		}
+        
+        return list;
+    }
+    
+    public Vector<String> getTypes() throws SQLException {
+        Vector<String> list = new Vector<>();
+		String query =
+			"SELECT Type " +
+			"FROM type";
+		PreparedStatement ps = db.prepareStatement(query);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			list.add(rs.getString(1));
+		}
+        
         return list;
     }
 
@@ -132,20 +164,59 @@ public class GuiModel extends DefaultTableModel {
         System.out.println("Inserting new artist: " + artist + " (Not yet implemented)");
     }
 
-    public void insertStrain(String artist, String title, String year) throws SQLException {
+    public void insertStrain(String strain, String type, String rating, Vector<String> flavors, Vector<String> effects, String description) throws SQLException {
         // TODO: implement this
-        System.out.println("Inserting new strain: " + artist + " - " + title + "(" + year + ") " + " (Not yet implemented)");
+        System.out.println("Inserting new strain: "  + " - "  + "("  + ") " + " (Not yet implemented)");
     }
 
-    public void updateStrain(int strainID, String title, String year) throws SQLException {
+    public void updateStrain(int strainID, String strain, String type, String rating, Vector<String> flavors, Vector<String> effects, String description) throws SQLException {
         // TODO: implement this
-        System.out.println("Updating strain id " + strainID + " to " + title + "(" + year + ") " + " (Not yet implemented)");
-        setValueAt(title, selectedRow, 1);
-        setValueAt(year, selectedRow, 2);
+        System.out.println("Updating strain id " + strainID + " to " + strain + "(" + rating + ") " + " (Not yet implemented)");
+        setValueAt(strain, selectedRow, 1);
+        setValueAt(type, selectedRow, 2);
+        setValueAt(rating, selectedRow, 3);
     }
 
     public void deleteStrain(int strainID) throws SQLException {
         // TODO: implement this
         System.out.println("Deleting strain id: " + strainID + " (Not yet implemented)");
+    }
+    
+    public Vector<String> getFlavors(int strainID) throws SQLException {
+        Vector<String> list = new Vector<>();
+		String query =
+			"SELECT Flavor " +
+			"FROM flavor " +
+			"WHERE flavor.id IN " +
+					"(SELECT f.id " +
+					"FROM flavor AS f " +
+					"WHERE f.Strain_id = ?)";
+		PreparedStatement ps = db.prepareStatement(query);
+		ps.setInt(1, strainID);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			list.add(rs.getString(1));
+		}
+        
+        return list;
+    }
+    
+    public Vector<String> getEffects(int strainID) throws SQLException {
+        Vector<String> list = new Vector<>();
+		String query =
+			"SELECT Effect " +
+			"FROM effect " +
+			"WHERE effect.id IN " +
+				"(SELECT e.id " +
+				"FROM effect AS e " +
+				"WHERE e.Strain_id = ?)";
+		PreparedStatement ps = db.prepareStatement(query);
+		ps.setInt(1, strainID);
+		ResultSet rs = ps.executeQuery();
+		while (rs.next()) {
+			list.add(rs.getString(1));
+		}
+        
+        return list;
     }
 }

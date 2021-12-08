@@ -45,11 +45,10 @@ public class GuiApplication implements ActionListener, ListSelectionListener {
     JTable      searchResultsTable;
 
     JPanel      buttonPane;
-    JButton     addArtistButton;
+    JButton     addStrainButton;
     JButton		filterButton;
-    JButton     addAlbumButton;
-    JButton     editAlbumButton;
-    JButton     deleteAlbumButton;
+    JButton     editStrainButton;
+    JButton     deleteStrainButton;
     JButton     quitButton;
 
     public static void main(String[] args) {
@@ -116,23 +115,20 @@ public class GuiApplication implements ActionListener, ListSelectionListener {
         buttonPane.setLayout(new FlowLayout());
         cp.add(buttonPane, BorderLayout.SOUTH);
 
-        addArtistButton = new JButton("Add Artist");
-        addArtistButton.addActionListener(this);
-        addAlbumButton = new JButton("Add Album");
-        addAlbumButton.addActionListener(this);
-        editAlbumButton = new JButton("Edit Album");
-        editAlbumButton.setEnabled(false);
-        editAlbumButton.addActionListener(this);
-        deleteAlbumButton = new JButton("Delete Album");
-        deleteAlbumButton.setEnabled(false);
-        deleteAlbumButton.addActionListener(this);
+        addStrainButton = new JButton("Add Strain");
+        addStrainButton.addActionListener(this);
+        editStrainButton = new JButton("Edit Strain");
+        editStrainButton.setEnabled(false);
+        editStrainButton.addActionListener(this);
+        deleteStrainButton = new JButton("Delete Album");
+        deleteStrainButton.setEnabled(false);
+        deleteStrainButton.addActionListener(this);
         quitButton = new JButton("Quit");
         quitButton.addActionListener(this);
 
-        buttonPane.add(addArtistButton);
-        buttonPane.add(addAlbumButton);
-        buttonPane.add(editAlbumButton);
-        buttonPane.add(deleteAlbumButton);
+        buttonPane.add(addStrainButton);
+        buttonPane.add(editStrainButton);
+        buttonPane.add(deleteStrainButton);
         buttonPane.add(quitButton);
 
         frame.pack();
@@ -145,17 +141,11 @@ public class GuiApplication implements ActionListener, ListSelectionListener {
         if (e.getSource() == this.searchButton) {
             search();
         }
-        else if (e.getSource() == this.addArtistButton) {
-            addArtist();
+        else if (e.getSource() == this.editStrainButton) {
+            editStrain();
         }
-        else if (e.getSource() == this.addAlbumButton) {
-            addAlbum();
-        }
-        else if (e.getSource() == this.editAlbumButton) {
-            editAlbum();
-        }
-        else if (e.getSource() == this.deleteAlbumButton) {
-//            deleteAlbum();
+        else if (e.getSource() == this.deleteStrainButton) {
+            deleteStrain();
         }
         else if (e.getSource() == this.quitButton) {
             System.exit(0);
@@ -179,25 +169,23 @@ public class GuiApplication implements ActionListener, ListSelectionListener {
 //        }
 //    }
 
-    private void editAlbum() {
-        GuiEditAlbumDialog dlg = new GuiEditAlbumDialog(model);
-        //dlg.openForEdit(model.getAlbumID(), model.getArtist(), model.getAlbumTitle(), model.getAlbumYear());
+    private void editStrain() {
+        GuiEditStrainDialog dlg = new GuiEditStrainDialog(model);
+        dlg.openForEdit(model.getStrainID(), model.getStrain(), model.getStrainType(), model.getStrainRating());
     }
 
-    private void addAlbum() {
-        GuiEditAlbumDialog dlg = new GuiEditAlbumDialog(model);
+    private void addStrain() {
+        GuiEditStrainDialog dlg = new GuiEditStrainDialog(model);
         dlg.openForInsert();
     }
-
-    private void addArtist() {
-        String artist = JOptionPane.showInputDialog(frame, "Enter artist name:");
-        try {
-            model.insertArtist(artist);
-        } catch (SQLException e) {
-            sqlExceptionHandler(e);
-        }
+    private void deleteStrain() {
+    	try {
+			model.deleteStrain(searchResultsTable.getSelectedRow());
+		} catch (SQLException e) {
+			sqlExceptionHandler(e);
+		}
     }
-
+    
     private void search() {
         try {
             model.search(filterBox, searchText.getText());
@@ -208,12 +196,12 @@ public class GuiApplication implements ActionListener, ListSelectionListener {
 
     public void valueChanged(ListSelectionEvent e) {
         if (searchResultsTable.getSelectedRow() == -1) {
-            editAlbumButton.setEnabled(false);
-            deleteAlbumButton.setEnabled(false);
+            editStrainButton.setEnabled(false);
+            deleteStrainButton.setEnabled(false);
         }
         else {
-            editAlbumButton.setEnabled(true);
-            deleteAlbumButton.setEnabled(true);
+            editStrainButton.setEnabled(true);
+            deleteStrainButton.setEnabled(true);
         }
         model.setSelectedRow(searchResultsTable.getSelectedRow());
     }
