@@ -1,0 +1,12 @@
+/GuiApplication.class
+/GuiEditAlbumDialog.class
+/GuiLoginDialog$1.class
+/GuiLoginDialog.class
+/GuiModel.class
+/FilterBox.class
+
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build
