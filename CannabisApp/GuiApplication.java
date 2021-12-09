@@ -1,6 +1,7 @@
 /*
    Copyright 2008 Christopher Painter-Wakefield
 
+
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
    You may obtain a copy of the License at
@@ -12,7 +13,13 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+   
 */
+
+
+/*
+ *   REPURPOSED BY AUSTIN SLADE GETZ
+ */
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -45,11 +52,9 @@ public class GuiApplication implements ActionListener, ListSelectionListener {
     JTable      searchResultsTable;
 
     JPanel      buttonPane;
-    JButton     addStrainButton;
     JButton		filterButton;
     JButton		moreInfoButton;
-    JButton     editStrainButton;
-    JButton     deleteStrainButton;
+    
     JButton     quitButton;
 
     public static void main(String[] args) {
@@ -118,25 +123,14 @@ public class GuiApplication implements ActionListener, ListSelectionListener {
         buttonPane = new JPanel();
         buttonPane.setLayout(new FlowLayout());
         cp.add(buttonPane, BorderLayout.SOUTH);
-
-        addStrainButton = new JButton("Add Strain");
-        addStrainButton.addActionListener(this);
-        editStrainButton = new JButton("Edit Strain");
-        editStrainButton.setEnabled(false);
-        editStrainButton.addActionListener(this);
-        deleteStrainButton = new JButton("Delete Album");
-        deleteStrainButton.setEnabled(false);
-        deleteStrainButton.addActionListener(this);
+        
         moreInfoButton = new JButton("More Info");
         moreInfoButton.setEnabled(false);
         moreInfoButton.addActionListener(this);
         quitButton = new JButton("Quit");
         quitButton.addActionListener(this);
 
-        buttonPane.add(addStrainButton);
-        buttonPane.add(editStrainButton);
         buttonPane.add(moreInfoButton);
-        buttonPane.add(deleteStrainButton);
         buttonPane.add(quitButton);
 
         frame.pack();
@@ -148,12 +142,6 @@ public class GuiApplication implements ActionListener, ListSelectionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == this.searchButton) {
             search();
-        }
-        else if (e.getSource() == this.editStrainButton) {
-            editStrain();
-        }
-        else if (e.getSource() == this.deleteStrainButton) {
-            deleteStrain();
         }
         else if (e.getSource() == this.quitButton) {
             System.exit(0);
@@ -175,40 +163,10 @@ public class GuiApplication implements ActionListener, ListSelectionListener {
 		}
      }
 
-//    private void deleteAlbum() {
-//        if (JOptionPane.showConfirmDialog(frame,
-//                "Are you sure?",
-//                "Delete Album",
-//                JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-//            try {
-//                model.deleteAlbum(model.getAlbumID());
-//                model.removeSelectedRow();
-//            } catch (SQLException e) {
-//                sqlExceptionHandler(e);
-//            }
-//        }
-//    }
-
-    private void editStrain() {
-        GuiEditStrainDialog dlg = new GuiEditStrainDialog(model);
-        dlg.openForEdit(model.getStrainID(), model.getStrain(), model.getStrainType(), model.getStrainRating());
-    }
-
-    private void addStrain() {
-        GuiEditStrainDialog dlg = new GuiEditStrainDialog(model);
-        dlg.openForInsert();
-    }
-    private void deleteStrain() {
-    	try {
-			model.deleteStrain(searchResultsTable.getSelectedRow());
-		} catch (SQLException e) {
-			sqlExceptionHandler(e);
-		}
-    }
     private void moreInfo() {
     	
     	try {
-			JOptionPane.showMessageDialog(frame, model.getStrainInfo());
+			JOptionPane.showMessageDialog(frame.getContentPane(), model.getStrainInfo(),  "INFO", JOptionPane.PLAIN_MESSAGE);
 		} catch (SQLException e) {
 			sqlExceptionHandler(e);
 		}
@@ -224,13 +182,9 @@ public class GuiApplication implements ActionListener, ListSelectionListener {
 
     public void valueChanged(ListSelectionEvent e) {
         if (searchResultsTable.getSelectedRow() == -1) {
-            editStrainButton.setEnabled(false);
-            deleteStrainButton.setEnabled(false);
             moreInfoButton.setEnabled(false);
         }
         else {
-            editStrainButton.setEnabled(true);
-            deleteStrainButton.setEnabled(true);
             moreInfoButton.setEnabled(true);
         }
         model.setSelectedRow(searchResultsTable.getSelectedRow());

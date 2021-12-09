@@ -152,7 +152,9 @@ public class FilterBox extends JDialog  {
 			}
 			count++;
 		}
-		System.out.println(ans.substring(0, ans.length()-2));
+		if (ans.length() < 2) {
+			return "-1";
+		}
 		return ans.substring(0, ans.length()-2);
 	}
 	
@@ -165,7 +167,9 @@ public class FilterBox extends JDialog  {
 			}
 			count++;
 		}
-		System.out.println(ans.substring(0, ans.length()-2));
+		if (ans.length() < 2) {
+			return "-1";
+		}
 		return ans.substring(0, ans.length()-2);
 	}
 	
@@ -178,7 +182,9 @@ public class FilterBox extends JDialog  {
 			}
 			count++;
 		}
-		System.out.println(ans.substring(0, ans.length()-2));
+		if (ans.length() < 2) {
+			return "-1";
+		}
 		return ans.substring(0, ans.length()-2);
 	}
 	
@@ -190,16 +196,16 @@ public class FilterBox extends JDialog  {
 			return "t.Type, s.Rating DESC, s.Strain, Flavors, Effects";
 		}
 		else if (orderBy.getSelectedItem().equals("Effects")) {
-			return "Effects, s.Rating DESC, s.Strain, t.Type, Flavors";
+			return "Effects, t.Type, s.Rating DESC, s.Strain, Flavors";
 		}
 		else if (orderBy.getSelectedItem().equals("Flavors")) {
-			return "Flavors, s.Rating DESC, s.Strain, t.Type, Effects";
+			return "Flavors, t.Type, s.Rating DESC, s.Strain, Effects";
 		}
 		else if (orderBy.getSelectedItem().equals("Rating")) {
-			return "s.Rating DESC, s.Strain, t.Type, Flavors, Effects";	
+			return "s.Rating DESC, t.Type, s.Strain, Flavors, Effects";	
 		}
 
-		return "s.Strain, s.Rating DESC, t.Type, Flavors, Effects";
+		return "s.Strain, t.Type, s.Rating DESC, Flavors, Effects";
 		
 	}
 	

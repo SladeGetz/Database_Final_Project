@@ -1,3 +1,4 @@
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.util.Vector;
@@ -93,7 +94,7 @@ public class GuiModel extends DefaultTableModel {
     			lineLength++;
     		}
     		ans += description.charAt(i);
-    		if (lineLength > 14) {
+    		if (lineLength > 35) {
     			if (description.charAt(i) == ' '||description.charAt(i) == ',' || description.charAt(i) == '.') {
     				ans +="\n";
     				lineLength = 0;
@@ -119,7 +120,6 @@ public class GuiModel extends DefaultTableModel {
             setNumRows(1);
             setValueAt("Search by "  + ":", 0, 0);
             setValueAt(val, 0, 1);
-            setValueAt("(Not yet implemented)", 0, 2);
         }
         else {
             dataVector = new Vector<Vector>();
@@ -134,6 +134,11 @@ public class GuiModel extends DefaultTableModel {
                 dataVector.add(row);
                 strainIDs.add(rs.getInt(6));
             }
+            if (dataVector.isEmpty()) {
+            	filterBox.setVisible(true);
+            	JOptionPane.showMessageDialog(filterBox.getContentPane(), "NO RESULTS", "QUERY ERROR", JOptionPane.ERROR_MESSAGE);
+            	
+            }
             this.fireTableDataChanged();
         }
     }
@@ -141,29 +146,6 @@ public class GuiModel extends DefaultTableModel {
  
 
     public ResultSet searchByStrain(String val, FilterBox filterBox) throws SQLException {
-//    	String query =
-//                "SELECT s.Strain, t.Type, s.Rating, STRING_AGG(DISTINCT e.Effect, ', ' ORDER BY e.Effect) Effects, STRING_AGG(DISTINCT f.Flavor, ', ' ORDER BY f.Flavor) Flavors, s.id " +
-//                "FROM type AS t, type_xref AS tx, strain AS s, effects AS e, flavors AS f, effect_xref AS ex, flavor_xref AS fx " +
-//                "WHERE lower(s.Strain) LIKE lower(?) " +
-//                "AND s.id = tx.Strain_id " +
-//                "AND s.Rating >= ? " + // get min rating
-//                "AND (s.id IN " + 
-//                		"(SELECT ex.Strain_id " +
-//                		"FROM effect_xref AS ex " +
-//                		"WHERE ex.Effect_id IN (" + filterBox.getEffects() + ")) " + // get selected effect ids
-//                	"OR s.id IN " +
-//                		"(SELECT fx.Strain_id " +
-//                		"FROM flavor_xref AS fx " +
-//                		"WHERE fx.Flavor_id IN (" + filterBox.getFlavors() + "))) " + // get selected flavors 
-//                "AND t.id IN (" + filterBox.getTypes() + ") " +
-//                "AND tx.Type_id = t.id "+
-//                "AND e.id = ex.Effect_id " +
-//                "AND ex.Strain_id = s.id " +
-//                "AND f.id = fx.Flavor_id " +
-//                "AND fx.Strain_id = s.id " +
-//                "GROUP BY s.id, t.Type " +
-//                "ORDER BY " + filterBox.getOrder(); // filterbox sets order
-//    	
     	String query =
     			"SELECT s.Strain, t.Type, s.Rating, STRING_AGG(DISTINCT e.Effect, ', ' ORDER BY e.Effect) Effects, STRING_AGG(DISTINCT f.Flavor, ', ' ORDER BY f.Flavor) Flavors, s.id " +
     					"FROM type AS t, type_xref AS tx, strain AS s, (SELECT Effect, id FROM effects WHERE id IN (" + filterBox.getEffects() + ")) AS e, (SELECT Flavor, id FROM flavors WHERE id IN (" + filterBox.getFlavors() + ")) AS f, effect_xref AS ex, flavor_xref AS fx " +
@@ -229,25 +211,6 @@ public class GuiModel extends DefaultTableModel {
     }
 
 
-    public void insertStrain(String strain, String type, String rating, Vector<String> flavors, Vector<String> effects, String description) throws SQLException {
-        // TODO: implement this
-        System.out.println("Inserting new strain: "  + " - "  + "("  + ") " + " (Not yet implemented)");
-    }
-
-    public void addStrain(int strainID, Boolean has_tried) throws SQLException {
-    	String query = "INSERT INTO myStrains VALUES (?, ?)";
-    	
-    	PreparedStatement ps = db.prepareStatement(query);
-    	ps.setInt(1, strainID);
-    	ps.setBoolean(2, has_tried);
-    	
-    	ps.executeQuery();
-    }
-
-    public void deleteStrain(int strainID) throws SQLException {
-        // TODO: implement this
-        System.out.println("Deleting strain id: " + strainID + " (Not yet implemented)");
-    }
     
     public Vector<String> getFlavors(int strainID) throws SQLException {
         Vector<String> list = new Vector<>();
@@ -291,10 +254,10 @@ public class GuiModel extends DefaultTableModel {
     	String flav = getFlavors(getStrainID()).toString();
     	String fx = getEffects(getStrainID()).toString();
     	String info = "Strain: " + getStrain() +
-    			"\nFlavors: " + flav.substring(1, flav.length() -1) +
-    			"\nEffects: " + fx.substring(1, fx.length() -1 ) +
-    			"\nRating: " + getStrainRating() + "\tType: " + getStrainType() +
-    			"\nDescription: " + getStrainDescription();
+    			"\n\nFlavors: " + flav.substring(1, flav.length() -1) +
+    			"\n\nEffects: " + fx.substring(1, fx.length() -1 ) +
+    			"\n\nRating: " + getStrainRating() + ",\t Type: " + getStrainType() +
+    			"\n\nDescription: " + getStrainDescription();
     	return info;
     }
 }
